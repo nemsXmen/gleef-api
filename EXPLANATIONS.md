@@ -46,6 +46,6 @@ UI for managing translation keys and values.
  - create a reppository for schema then  back-end end front-end will use the same schema
 
 ## Suggested Features for the Next Iteration
-History/versioning of translation changes
-Role-based access control for collaborative editing
-Real-time translation collaboration using WebSockets
+ - History/versioning of translation changes
+ - Role-based access control for collaborative editing
+ - Real-time translation collaboration using WebSockets
