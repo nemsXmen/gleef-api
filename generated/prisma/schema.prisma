@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  keys        TranslationKey[]
+}
+
+model Language {
+  id           Int           @id @default(autoincrement())
+  code         String        @unique @db.VarChar(10)
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  translations Translation[]
+}
+
+model TranslationKey {
+  id           Int           @id @default(autoincrement())
+  projectId    Int
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  key          String
+  namespace    String?
+  description  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  translations Translation[]
+
+  @@unique([projectId, key])
+}
+
+model Translation {
+  id                 Int                  @id @default(autoincrement())
+  translationKeyId   Int
+  translationKey     TranslationKey       @relation(fields: [translationKeyId], references: [id], onDelete: Cascade)
+  languageId         Int
+  language           Language             @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  value              String               @db.Text
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  editedBy           Int?
+  editor             User?                @relation(fields: [editedBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  TranslationHistory TranslationHistory[]
+
+  @@unique([translationKeyId, languageId])
+}
+
+model User {
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique
+  password           String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  editedTranslations Translation[]
+  editedHistory      TranslationHistory[]
+}
+
+model TranslationHistory {
+  id            Int         @id @default(autoincrement())
+  translationId Int
+  translation   Translation @relation(fields: [translationId], references: [id], onDelete: Cascade)
+  newValue      String      @db.Text
+  oldValue      String      @db.Text
+  createdAt     DateTime    @default(now())
+  editedBy      Int?
+  editor        User?       @relation(fields: [editedBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([translationId, createdAt(sort: Desc)], name: "idx_translation_history")
+}
