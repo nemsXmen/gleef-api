@@ -35,10 +35,11 @@ model TranslationKey {
 ```
 
 ## Challenges
-Ensuring react-hook-form's useFieldArray stayed in sync with watch() and setValue() after dynamic file imports.
-Handling translation flattening/unflattening while maintaining structure integrity.
-Prisma's upsert with compound keys required careful structure of the where clause.
-UI for managing translation keys and values.
+- Ensuring react-hook-form's useFieldArray stayed in sync with watch() and setValue() after dynamic file imports.
+- Handling translation flattening/unflattening while maintaining structure integrity. 
+- Prisma's upsert with compound keys required careful structure of the where clause.
+- UI for managing translation keys and values.
+- Designing the right Schema used for react-hook-form to handle translations and translation keys.
 
 
 ## What Would I Do Differently
